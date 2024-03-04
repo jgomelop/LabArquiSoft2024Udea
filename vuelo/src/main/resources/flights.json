@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "airline": "Airways Inc.",
+    "origin": "Bogota",
+    "destination": "Cali",
+    "departureDate": "2024-01-01T08:00:00",
+    "arrivalDate": "2024-01-01T10:00:00",
+    "price": 159
+  },
+  {
+    "id": 2,
+    "airline": "JetFly",
+    "origin": "Medellin",
+    "destination": "Miami",
+    "departureDate": "2024-01-02T12:00:00",
+    "arrivalDate": "2024-01-02T14:00:00",
+    "price": 443
+  },
+  {
+    "id": 3,
+    "airline": "Avianca",
+    "origin": "Medellin",
+    "destination": "Cartagena",
+    "departureDate": "2024-01-02T12:00:00",
+    "arrivalDate": "2024-01-02T14:00:00",
+    "price": 100
+  },
+  {
+    "id": 4,
+    "airline": "Latam",
+    "origin": "Bogota",
+    "destination": "Cali",
+    "departureDate": "2024-01-03T13:00:00",
+    "arrivalDate": "2024-01-03T15:00:00",
+    "price": 98
+  },
+  {
+    "id": 5,
+    "airline": "Avianca",
+    "origin": "Medellin",
+    "destination": "Bogota",
+    "departureDate": "2024-01-03T12:00:00",
+    "arrivalDate": "2024-01-03T14:00:00",
+    "price": 54
+  },
+  {
+    "id": 6,
+    "airline": "Wingo",
+    "origin": "Medellin",
+    "destination": "Santa Marta",
+    "departureDate": "2024-01-04T12:00:00",
+    "arrivalDate": "2024-01-04T14:00:00",
+    "price": 123
+  }
+]
