@@ -22,3 +22,7 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Node modules
+vuelo-front/node_modules
+vuelo-front/clientevuelo/node_modules
