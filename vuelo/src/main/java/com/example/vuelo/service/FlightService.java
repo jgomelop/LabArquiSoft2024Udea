@@ -25,13 +25,40 @@ public class FlightService {
     // Ruta del archivo
     private final String filePath = "classpath:flights.json";
 
+    // ======================================================
+    // Functions to check in for filters
     private boolean isDateInRange(LocalDate dateToCheck, LocalDate startDate, LocalDate endDate){
         // Verifica si la fecha está en el rango correcto
         return !dateToCheck.isBefore(startDate) && !dateToCheck.isAfter(endDate);
     }
 
-    // Método de la lógica de búsqueda de vuelos
-    public List<List<Flight>> searchFlights(LocalDate startDate, LocalDate endDate) {
+    private boolean isStringEqual(String str, String strToTest){
+        return str.equalsIgnoreCase(strToTest);
+    }
+
+    // Predicates for lambda expressions in filters
+    private Predicate<Flight> dateRangeFilterExpression(String startDate, String endDate){
+        LocalDate parsedStartDate = LocalDate.parse(startDate);
+        LocalDate parsedEndDate = LocalDate.parse(endDate);
+        return flight -> isDateInRange(flight.getDepartureDate(), parsedStartDate, parsedEndDate);
+    }
+    private Predicate<Flight> originFilterExpression(String origin){
+        return flight -> isStringEqual(flight.getOrigin(), origin);
+    }
+
+    private Predicate<Flight> destinationFilterExpression(String destination){
+        return flight -> isStringEqual(flight.getDestination(), destination);
+    }
+
+    private Predicate<Flight> airlineFilterExpression(String airline){
+        return flight -> isStringEqual(flight.getAirline(), airline);
+    }
+
+    // =================================================================
+    // Actual methods
+
+
+    public List<List<Flight>> searchFlightsByDates(String startDate, String endDate) {
          try {
             ObjectMapper objectMapper = new ObjectMapper();
             InputStream inputStream  = getClass().getClassLoader().getResourceAsStream("flights.json");
@@ -39,7 +66,7 @@ public class FlightService {
                  Flight[] flights = objectMapper.readValue(inputStream, Flight[].class);
                  return Arrays.asList(
                          Arrays.stream(flights)
-                                 .filter(flight -> isDateInRange(flight.getDepartureDate(), startDate, endDate))
+                                 .filter(dateRangeFilterExpression(startDate,endDate))
                                  .collect(Collectors.toList())
                  );
              } else {
@@ -51,10 +78,6 @@ public class FlightService {
         }
     }
 
-    private boolean isStringEqual(String str, String strToTest){
-        return str.equals(strToTest);
-    }
-
     public List<List<Flight>> searchFlightsByOriginDestination(String origin, String destination){
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -63,7 +86,8 @@ public class FlightService {
                 Flight[] flights = objectMapper.readValue(inputStream, Flight[].class);
                 return Arrays.asList(
                         Arrays.stream(flights)
-                                .filter(flight -> isStringEqual(flight.getOrigin(), origin) && isStringEqual(flight.getDestination(), destination))
+                                .filter(originFilterExpression(origin))
+                                .filter(destinationFilterExpression(destination))
                                 .collect(Collectors.toList())
                 );
             } else {
@@ -73,20 +97,6 @@ public class FlightService {
         } catch (IOException e) {
             throw new RuntimeException("Error leyendo archivo JSON",e);
         }
-    }
-
-    private Stream<Flight> filterFlightsByParam(Stream<Flight> flightsStream, String param, String paramValue){
-        if (param.equalsIgnoreCase(FilterSearchParams.ORIGIN)){
-            return flightsStream.filter(flight -> isStringEqual(flight.getOrigin(), paramValue));
-        } else if (param.equalsIgnoreCase(FilterSearchParams.DESTINATION)) {
-            return flightsStream.filter(flight -> isStringEqual(flight.getDestination(), paramValue));
-        } else {
-            return null;
-        }
-    }
-
-    private Predicate<Flight> originFilterExpression(String origin){
-        return flight -> isStringEqual(flight.getOrigin(), origin);
     }
 
     public List<List<Flight>> searchFlightsByOrigin(String origin){

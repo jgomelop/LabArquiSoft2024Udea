@@ -29,7 +29,7 @@ public class FlightController {
     @GetMapping("/search")
     public List<List<Flight>> searchFlights(
             // fechas van sobre la ruta de la URL
-            // Podemos usar QueryParam o REquestPAram
+            // Podemos usar QueryParam o RequestPAram
             @RequestParam() Map<String, String> requestParams
             ) throws NoSuchMethodException {
 
@@ -39,9 +39,7 @@ public class FlightController {
                     requestParams.get(DESTINATION)
             );
         } else if (requestParams.containsKey(START_DATE) && requestParams.containsKey(END_DATE)) {
-            LocalDate parsedStartDate = LocalDate.parse(requestParams.get(START_DATE));
-            LocalDate parsedEndDate = LocalDate.parse(requestParams.get(END_DATE));
-            return flightService.searchFlights(parsedStartDate,parsedEndDate);
+            return flightService.searchFlightsByDates(requestParams.get(START_DATE), requestParams.get(END_DATE));
         } else if (requestParams.containsKey(ORIGIN)) {
             return flightService.searchFlightsByOrigin(requestParams.get(ORIGIN));
         } else {
