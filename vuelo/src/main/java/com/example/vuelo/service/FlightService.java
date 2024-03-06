@@ -43,5 +43,28 @@ public class FlightService {
         }
     }
 
+    private boolean isStringEqual(String str, String strToTest){
+        return str.equals(strToTest);
+    }
+
+    public List<List<Flight>> searchFlightsByOriginDestination(String origin, String destination){
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            InputStream inputStream  = getClass().getClassLoader().getResourceAsStream("flights.json");
+            if (inputStream != null) {
+                Flight[] flights = objectMapper.readValue(inputStream, Flight[].class);
+                return Arrays.asList(
+                        Arrays.stream(flights)
+                                .filter(flight -> isStringEqual(flight.getOrigin(), origin) && isStringEqual(flight.getDestination(), destination))
+                                .collect(Collectors.toList())
+                );
+            } else {
+                return null;
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException("Error leyendo archivo JSON",e);
+        }
+    }
 
 }
