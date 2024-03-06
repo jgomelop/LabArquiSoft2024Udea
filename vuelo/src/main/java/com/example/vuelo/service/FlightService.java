@@ -67,4 +67,24 @@ public class FlightService {
         }
     }
 
+    public List<List<Flight>> searchFlightsByOrigin(String origin){
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            InputStream inputStream  = getClass().getClassLoader().getResourceAsStream("flights.json");
+            if (inputStream != null) {
+                Flight[] flights = objectMapper.readValue(inputStream, Flight[].class);
+                return Arrays.asList(
+                        Arrays.stream(flights)
+                                .filter(flight -> isStringEqual(flight.getOrigin(), origin))
+                                .collect(Collectors.toList())
+                );
+            } else {
+                return null;
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException("Error leyendo archivo JSON",e);
+        }
+    }
+
 }

@@ -39,10 +39,11 @@ public class FlightController {
                     requestParams.get(DESTINATION)
             );
         } else if (requestParams.containsKey(START_DATE) && requestParams.containsKey(END_DATE)) {
-
             LocalDate parsedStartDate = LocalDate.parse(requestParams.get(START_DATE));
             LocalDate parsedEndDate = LocalDate.parse(requestParams.get(END_DATE));
             return flightService.searchFlights(parsedStartDate,parsedEndDate);
+        } else if (requestParams.containsKey(ORIGIN)) {
+            return flightService.searchFlightsByOrigin(requestParams.get(ORIGIN));
         } else {
             throw new NoSuchMethodException();
         }
