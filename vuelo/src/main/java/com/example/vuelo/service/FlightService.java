@@ -116,10 +116,5 @@ public class FlightService {
         } catch (NullPointerException e) {
             throw new RuntimeException("Error filtering by destination", e);
         }
-
     }
-
-
-
-
 }
