@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import com.example.vuelo.utils.FilterSearchParams;
 
 @RestController
 @RequestMapping("/flights")
@@ -20,11 +21,6 @@ public class FlightController {
     @Autowired
     private FlightService flightService;
 
-    private final String ORIGIN = "origin";
-    private final String DESTINATION = "destination";
-    private final String START_DATE = "startDate";
-    private final String END_DATE = "endDate";
-
     // Debo mapear cada método para el protocolo HTTP
     @GetMapping("/search")
     public List<List<Flight>> searchFlights(
@@ -33,17 +29,20 @@ public class FlightController {
             @RequestParam() Map<String, String> requestParams
             ) throws NoSuchMethodException {
 
-        if (requestParams.containsKey(ORIGIN) && requestParams.containsKey(DESTINATION)){
+        if (requestParams.containsKey(FilterSearchParams.ORIGIN)
+                && requestParams.containsKey(FilterSearchParams.DESTINATION)){
             return flightService.searchFlightsByOriginDestination(
-                    requestParams.get(ORIGIN),
-                    requestParams.get(DESTINATION)
-            );
-        } else if (requestParams.containsKey(START_DATE) && requestParams.containsKey(END_DATE)) {
-            return flightService.searchFlightsByDates(requestParams.get(START_DATE), requestParams.get(END_DATE));
-        } else if (requestParams.containsKey(ORIGIN)) {
-            return flightService.searchFlightsByOrigin(requestParams.get(ORIGIN));
+                    requestParams.get(FilterSearchParams.ORIGIN),
+                    requestParams.get(FilterSearchParams.DESTINATION));
+        }
+        else if (requestParams.containsKey(FilterSearchParams.START_DATE) && requestParams.containsKey(FilterSearchParams.END_DATE)) {
+            return flightService.searchFlightsByDates(requestParams.get(FilterSearchParams.START_DATE), requestParams.get(FilterSearchParams.END_DATE));
+        } else if (requestParams.containsKey(FilterSearchParams.ORIGIN)) {
+            return flightService.searchFlightsByOrigin(requestParams.get(FilterSearchParams.ORIGIN));
+        } else if (requestParams.containsKey(FilterSearchParams.DESTINATION)) {
+            return flightService.searchFlightsByDestination(requestParams.get(FilterSearchParams.DESTINATION));
         } else {
-            throw new NoSuchMethodException();
+            throw new NoSuchMethodException("Algún parámetro es incorrecto o su valor es inválido.");
         }
 
     }

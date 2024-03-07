@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -57,65 +58,68 @@ public class FlightService {
     // =================================================================
     // Actual methods
 
-
-    public List<List<Flight>> searchFlightsByDates(String startDate, String endDate) {
-         try {
+    private Stream<Flight> prepareFlightServiceStream(){
+        try {
             ObjectMapper objectMapper = new ObjectMapper();
             InputStream inputStream  = getClass().getClassLoader().getResourceAsStream("flights.json");
-             if (inputStream != null) {
-                 Flight[] flights = objectMapper.readValue(inputStream, Flight[].class);
-                 return Arrays.asList(
-                         Arrays.stream(flights)
-                                 .filter(dateRangeFilterExpression(startDate,endDate))
-                                 .collect(Collectors.toList())
-                 );
-             } else {
-                 return null;
-             }
+            if (inputStream != null) {
+                Flight[] flights = objectMapper.readValue(inputStream, Flight[].class);
+                return  Arrays.stream(flights);
+            } else {
+                return null;
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error leyendo archivo JSON",e);
+        }
+    }
 
-         } catch (IOException e) {
-             throw new RuntimeException("Error leyendo archivo JSON",e);
+    public List<List<Flight>> searchFlightsByDates(String startDate, String endDate) {
+        try {
+            return Arrays.asList(
+                    prepareFlightServiceStream()
+                            .filter(dateRangeFilterExpression(startDate,endDate))
+                            .collect(Collectors.toList()));
+        } catch (NullPointerException e) {
+            throw new RuntimeException("Error filtering by dates.", e);
         }
     }
 
     public List<List<Flight>> searchFlightsByOriginDestination(String origin, String destination){
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            InputStream inputStream  = getClass().getClassLoader().getResourceAsStream("flights.json");
-            if (inputStream != null) {
-                Flight[] flights = objectMapper.readValue(inputStream, Flight[].class);
-                return Arrays.asList(
-                        Arrays.stream(flights)
-                                .filter(originFilterExpression(origin))
-                                .filter(destinationFilterExpression(destination))
-                                .collect(Collectors.toList())
-                );
-            } else {
-                return null;
-            }
-
-        } catch (IOException e) {
-            throw new RuntimeException("Error leyendo archivo JSON",e);
+            return Arrays.asList(
+                    prepareFlightServiceStream()
+                            .filter(originFilterExpression(origin))
+                            .filter(destinationFilterExpression(destination))
+                            .collect(Collectors.toList()));
+        } catch (NullPointerException e) {
+            throw new RuntimeException("Error filtering by origin or destination.",e);
         }
     }
 
     public List<List<Flight>> searchFlightsByOrigin(String origin){
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            InputStream inputStream  = getClass().getClassLoader().getResourceAsStream("flights.json");
-            if (inputStream != null) {
-                Flight[] flights = objectMapper.readValue(inputStream, Flight[].class);
-                return Arrays.asList(
-                        Arrays.stream(flights)
-                                .filter(originFilterExpression(origin))
-                                .collect(Collectors.toList())
-                );
-            } else {
-                return null;
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Error leyendo archivo JSON",e);
+            return Arrays.asList(
+                    prepareFlightServiceStream()
+                            .filter(originFilterExpression(origin))
+                            .collect(Collectors.toList()));
+        } catch (NullPointerException e) {
+            throw new RuntimeException("Error filtering by origin", e);
         }
     }
+
+    public List<List<Flight>> searchFlightsByDestination(String destination){
+        try {
+            return Arrays.asList(
+                    prepareFlightServiceStream()
+                            .filter(destinationFilterExpression(destination))
+                            .collect(Collectors.toList()));
+        } catch (NullPointerException e) {
+            throw new RuntimeException("Error filtering by destination", e);
+        }
+
+    }
+
+
+
 
 }
