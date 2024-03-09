@@ -55,6 +55,11 @@ public class FlightService {
         return flight -> isStringEqual(flight.getAirline(), airline);
     }
 
+    private Predicate<Flight> maxPriceFilterExpression(double maxPrice) {
+        return flight -> flight.getPrice() <= maxPrice;
+    }
+
+
     // =================================================================
     // Actual methods
 
@@ -115,6 +120,50 @@ public class FlightService {
                             .collect(Collectors.toList()));
         } catch (NullPointerException e) {
             throw new RuntimeException("Error filtering by destination", e);
+        }
+    }
+
+    private Predicate<Flight> priceRangeFilterExpression(String priceRange) {
+        String[] prices = priceRange.split("-");
+        try {
+            double minPrice = Double.parseDouble(prices[0]);
+            double maxPrice = Double.parseDouble(prices[1]);
+            return flight -> flight.getPrice() >= minPrice && flight.getPrice() <= maxPrice;
+        }catch (NumberFormatException | ArrayIndexOutOfBoundsException e ) {
+            throw new IllegalArgumentException("No valid price format" + priceRange);
+        }
+    }
+
+    public List<List<Flight>> searchFlightsByPriceRange(String priceRange) {
+        try {
+            return Arrays.asList(
+                    prepareFlightServiceStream()
+                            .filter(priceRangeFilterExpression(priceRange))
+                            .collect(Collectors.toList()));
+        } catch (NullPointerException e) {
+            throw new RuntimeException("Error filtering by price range.", e);
+        }
+    }
+
+    public List<List<Flight>> searchFlightsByMaxPrice(double maxPrice) {
+        try {
+            return Arrays.asList(
+                    prepareFlightServiceStream()
+                            .filter(maxPriceFilterExpression(maxPrice))
+                            .collect(Collectors.toList()));
+        } catch (NullPointerException e) {
+            throw new RuntimeException("Error filtering by max price.", e);
+        }
+    }
+
+    public List<List<Flight>> searchFlightsByAirline(String airline) {
+        try {
+            return Arrays.asList(
+                    prepareFlightServiceStream()
+                            .filter(airlineFilterExpression(airline))
+                            .collect(Collectors.toList()));
+        } catch (NullPointerException e) {
+            throw new RuntimeException("Error filtering by airline.", e);
         }
     }
 }

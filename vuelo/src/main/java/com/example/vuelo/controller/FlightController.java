@@ -41,8 +41,17 @@ public class FlightController {
             return flightService.searchFlightsByOrigin(requestParams.get(FilterSearchParams.ORIGIN));
         } else if (requestParams.containsKey(FilterSearchParams.DESTINATION)) {
             return flightService.searchFlightsByDestination(requestParams.get(FilterSearchParams.DESTINATION));
+        } else if (requestParams.containsKey(FilterSearchParams.PRICE_RANGE)) {
+            String priceRange = requestParams.get(FilterSearchParams.PRICE_RANGE);
+            return flightService.searchFlightsByPriceRange(priceRange);
+        } else if (requestParams.containsKey(FilterSearchParams.MAX_PRICE)) {
+            double maxPrice = Double.parseDouble(requestParams.get(FilterSearchParams.MAX_PRICE));
+            return flightService.searchFlightsByMaxPrice(maxPrice);
+        } else if (requestParams.containsKey(FilterSearchParams.AIRLINE)) {
+            String airline = requestParams.get(FilterSearchParams.AIRLINE);
+            return flightService.searchFlightsByAirline(airline);
         } else {
-            throw new NoSuchMethodException("Algún parámetro es incorrecto o su valor es inválido.");
+            throw new NoSuchMethodException("Invalid parameter.");
         }
 
     }
