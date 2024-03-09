@@ -34,7 +34,9 @@ public class FlightService {
     }
 
     private boolean isStringEqual(String str, String strToTest){
-        return str.equalsIgnoreCase(strToTest);
+        String strClean  = str.replaceAll("\\s+","");
+        String strToTestClean = strToTest.replaceAll("\\s+","");
+        return strClean.equalsIgnoreCase(strToTestClean);
     }
 
     // Predicates for lambda expressions in filters
