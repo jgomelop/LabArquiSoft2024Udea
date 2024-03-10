@@ -7,50 +7,72 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import com.example.vuelo.utils.FilterSearchParams;
 
 @RestController
 @RequestMapping("/flights")
 public class FlightController {
+    // Nombre de los
+    private final String ORIGIN = "origin";
+    private  final String DESTINATION = "destination";
+    private final String START_DATE = "startDate";
+    private final String END_DATE = "endDate";
+    private final String PRICE_RANGE = "rangePrice";
+    private final String MAX_PRICE = "maxPrice";
+    private final String AIRLINE = "airline";
 
-    // Inyección de dependencias
     @Autowired
     private FlightService flightService;
 
-    // Debo mapear cada método para el protocolo HTTP
+    /**
+     * Recibe los parámetros del Front-end
+     * como un Map de strings "<nombreParametro>": "<valorParametro>",
+     * el cual se desempaqueta por casos de uso, enviándolos al FlightService
+     */
     @GetMapping("/search")
     public List<List<Flight>> searchFlights(
-            // fechas van sobre la ruta de la URL
-            // Podemos usar QueryParam o RequestPAram
             @RequestParam() Map<String, String> requestParams
             ) throws NoSuchMethodException {
 
-        if (requestParams.containsKey(FilterSearchParams.ORIGIN)
-                && requestParams.containsKey(FilterSearchParams.DESTINATION)){
+        /*
+        Se listan algunos casos posibles que se desean implementar.
+        Cada caso tiene su propio servicio de búsqueda.
+         */
+        if (requestParams.containsKey(ORIGIN)
+                && requestParams.containsKey(DESTINATION)){
             return flightService.searchFlightsByOriginDestination(
-                    requestParams.get(FilterSearchParams.ORIGIN),
-                    requestParams.get(FilterSearchParams.DESTINATION));
+                    requestParams.get(ORIGIN),
+                    requestParams.get(DESTINATION));
         }
-        else if (requestParams.containsKey(FilterSearchParams.START_DATE) && requestParams.containsKey(FilterSearchParams.END_DATE)) {
-            return flightService.searchFlightsByDates(requestParams.get(FilterSearchParams.START_DATE), requestParams.get(FilterSearchParams.END_DATE));
-        } else if (requestParams.containsKey(FilterSearchParams.ORIGIN)) {
-            return flightService.searchFlightsByOrigin(requestParams.get(FilterSearchParams.ORIGIN));
-        } else if (requestParams.containsKey(FilterSearchParams.DESTINATION)) {
-            return flightService.searchFlightsByDestination(requestParams.get(FilterSearchParams.DESTINATION));
-        } else if (requestParams.containsKey(FilterSearchParams.PRICE_RANGE)) {
-            String priceRange = requestParams.get(FilterSearchParams.PRICE_RANGE);
+        else if (requestParams.containsKey(DESTINATION)) {
+            return flightService
+                    .searchFlightsByDestination(requestParams.get(DESTINATION));
+        }
+        else if (requestParams.containsKey(START_DATE)
+                && requestParams.containsKey(END_DATE)) {
+            return flightService
+                    .searchFlightsByDates(
+                            requestParams.get(START_DATE),
+                            requestParams.get(END_DATE));
+        }
+        else if (requestParams.containsKey(ORIGIN)) {
+            return flightService.searchFlightsByOrigin(requestParams.get(ORIGIN));
+        }
+        else if (requestParams.containsKey(PRICE_RANGE)) {
+            String priceRange = requestParams.get(PRICE_RANGE);
             return flightService.searchFlightsByPriceRange(priceRange);
-        } else if (requestParams.containsKey(FilterSearchParams.MAX_PRICE)) {
-            double maxPrice = Double.parseDouble(requestParams.get(FilterSearchParams.MAX_PRICE));
+        }
+        else if (requestParams.containsKey(MAX_PRICE)) {
+            double maxPrice = Double.parseDouble(requestParams.get(MAX_PRICE));
             return flightService.searchFlightsByMaxPrice(maxPrice);
-        } else if (requestParams.containsKey(FilterSearchParams.AIRLINE)) {
-            String airline = requestParams.get(FilterSearchParams.AIRLINE);
+        }
+        else if (requestParams.containsKey(AIRLINE)) {
+            String airline = requestParams.get(AIRLINE);
             return flightService.searchFlightsByAirline(airline);
-        } else {
+        }
+        else {
+            // Si no se encuentra el parámetro o dicho caso de uso.
             throw new NoSuchMethodException("Invalid parameter.");
         }
 
