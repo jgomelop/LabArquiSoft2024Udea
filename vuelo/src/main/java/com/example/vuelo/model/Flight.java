@@ -2,10 +2,10 @@ package com.example.vuelo.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-
 import java.time.LocalDate;
 
 /**
+ * Ejemplo de Modelo:
  *     "id": 1,
  *     "airline": "Airways Inc.",
  *     "origin": "Bogota",
