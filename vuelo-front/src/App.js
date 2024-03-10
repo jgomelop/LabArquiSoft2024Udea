@@ -24,7 +24,7 @@ function App() {
       {loading && <Spinner />}
       {showMessage && (
         <Message messageType="info">
-          Ingresa una fecha de inicio y final para buscar vuelos.
+          ¡Listo para despegar! ¿Tienes en mente el origen, destino, fechas, rango de precios, tope máximo o alguna aerolínea preferida? Cuéntame y encontraremos los vuelos ideales para ti.
         </Message>
       )}
       {showTable && <FlightsTable flights={flights} />}
